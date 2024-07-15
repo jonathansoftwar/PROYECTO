@@ -21,9 +21,9 @@ exports.login = async(req, res) => {
     }
 
 exports.createUsuario=async(req, res) => {
-    const { username, password } = req.body;
+    const {username,password}= req.body
 
-  // Verificar si todos los campos requeridos están presentes
+  // Verificar los campos requeridos 
   if (!username || !password) {
     return res.status(400).json({ error: 'Todos los campos (username, password) son requeridos' });
   }
@@ -33,10 +33,9 @@ exports.createUsuario=async(req, res) => {
     const result = await db.query('INSERT INTO usuarios (username, password) VALUES (?, ?)', [username, password]);
 
     // Obtener el ID del usuario insertado
-    const insertedUserId = result.insertId;
+    const userId = result.insertId;
 
-    // Devolver una respuesta exitosa
-    res.status(201).json({ id: insertedUserId, username, email });
+    res.status(201).json({ id: userId, username });
   } catch (error) {
     console.error('Error al insertar usuario:', error);
     res.status(500).json({ error: 'Error al insertar usuario en la base de datos' });
@@ -47,7 +46,7 @@ exports.eliminarUsuario=async(req, res) => {
 const userId = req.params.id;
 
   try {
-    // Verificar si el usuario existe antes de eliminarlo (opcional)
+    // Verificar si el usuario existe 
     const [user] = await db.query('SELECT * FROM usuarios WHERE id = ?', [userId]);
     if (!user) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
@@ -66,22 +65,22 @@ const userId = req.params.id;
 
 exports.updateUsuario=async(req, res) => {
     const userId = req.params.id;
-    console.log(req.body)
+    
     const { username, password } = req.body;
   
-    // Verificar si todos los campos requeridos están presentes
+    // Verificar los campos requeridos
     if (!username && !password) {
-      return res.status(400).json({ error: 'Se requiere al menos uno de los campos (username, password) para actualizar' });
+      return res.status(400).json({ error: 'los campos username, password son obligatorios' });
     }
   
     try {
-      // Verificar si el usuario existe antes de actualizarlo (opcional)
-      const [existingUser] = await db.query('SELECT * FROM usuarios WHERE id = ?', [userId]);
-      if (!existingUser) {
+      // Verificar si el usuario existe
+      const [exists] = await db.query('SELECT * FROM usuarios WHERE id = ?', [userId]);
+      if (!exists) {
         return res.status(404).json({ error: 'Usuario no encontrado' });
       }
   
-      // Construir la consulta de actualización según los campos proporcionados
+      // Construir la consulta de actualización
       const updateFields = [];
       const params = [];
   
@@ -95,13 +94,12 @@ exports.updateUsuario=async(req, res) => {
         params.push(password);
       }
   
-      // Ejecutar la consulta de actualización en la base de datos
+      // Actualizar registro en la base de datos
       const query = "UPDATE usuarios SET ${updateFields.join(', ')} WHERE id = ?";
       params.push(userId);
       await db.query(query, params);
   
-      // Devolver una respuesta exitosa
-      res.status(200).json({ message: 'Usuario actualizado correctamente' });
+      res.status(200).json({ message: 'Usuario actualizado exitosamente' });
     } catch (error) {
       console.error('Error al actualizar usuario:', error);
       res.status(500).json({ error: 'Error al actualizar usuario en la base de datos' });
