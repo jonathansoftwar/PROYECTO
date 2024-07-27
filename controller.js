@@ -106,10 +106,11 @@ exports.updateUsuario=async(req, res) => {
       console.error('Error al actualizar usuario:', error);
       res.status(500).json({ error: 'Error al actualizar usuario en la base de datos' });
     }
- };
+  };
 
- //Metodos para el producto
- exports.getProductos = async(req,res)=> {
+
+//Metodos para el producto
+exports.getProductos = async(req,res)=> {
    
   const [rows]= await con.query("SELECT * FROM producto");
   res.json(rows)
@@ -218,6 +219,109 @@ exports.updateProducto=async(req, res) => {
   } catch (error) {
     console.error('Error al actualizar producto:', error);
     res.status(500).json({ error: 'Error al actualizar producto en la base de datos' });
+  }
+};
+
+//Metodos para la compania
+exports.getCompanias = async(req,res)=> {
+   
+  const [rows]= await con.query("SELECT * FROM compania");
+  res.json(rows)
+}
+exports.getCompania =async(req, res) => {
+
+  const [rows]=await con.query("SELECT * FROM compania WHERE IdCompania=?" ,[req.params.id])
+ 
+  if (rows.length<=0) return res.status(404).json({messange:"Compania no encontrada"})
+      res.json(rows[0])
+}
+
+exports.createCompania=async(req, res) => {
+  const {nit,compania}= req.body
+
+// Verificar los campos requeridos 
+if (!nit || !compania) {
+  return res.status(400).json({ error: 'Todos los campos (nit, compania ) son requeridos' });
+}
+
+try {
+  // Insertar la compañia en la base de datos
+  const result = await con.query('INSERT INTO compania (nit, compania) VALUES (?, ?)', [nit, compania]);
+
+  // Obtener el ID de la compañia insertada
+  const companiaId = result[0].insertId;
+
+  res.status(201).json({ id: companiaId, nit, compania });
+} catch (error) {
+  console.error('Error al insertar compañia:', error);
+  res.status(500).json({ error: 'Error al insertar compania en la base de datos' });
+}
+};
+
+exports.eliminarCompania=async(req, res) => {
+const id = req.params.id;
+
+try {
+  // Verificar si la compañia existe 
+  const [exists] = await con.query('SELECT * FROM compania WHERE IdCompania = ?', [id]);
+  if (exists.length<=0) {
+    return res.status(404).json({ error: 'Compania no encontrada' });
+  }
+
+  // Eliminar la compañia de la base de datos
+  await con.query('DELETE FROM compania WHERE IdCompania = ?', [id]);
+
+  // Devolver una respuesta exitosa
+  res.status(200).json({ message: 'Compania eliminada correctamente' });
+} catch (error) {
+  console.error('Error al eliminar compania:', error);
+  res.status(500).json({ error: 'Error al eliminar compania de la base de datos' });
+}
+};
+
+exports.updateCompania=async(req, res) => {
+  const id = req.params.id;
+  
+  const {  nit, compania } = req.body;
+
+  // Verificar los campos requeridos
+  if (!nit && !compania ) {
+    return res.status(400).json({ error: 'los campos nit, compania son obligatorios' });
+  }
+
+  try {
+    // Verificar si la compañia existe
+    const [exists] = await con.query('SELECT * FROM compania WHERE IdCompania = ?', [id]);
+    if (exists.length<=0) {
+      return res.status(404).json({ error: 'Compania no encontrada' });
+    }
+
+    // Construir la consulta de actualización
+    const updateFields = [];
+    const params = [];
+    
+    if (compania) {
+      updateFields.push('Compania = ?');
+      params.push(compania);
+    }
+    
+    if (nit) {
+      updateFields.push('nit = ?');
+      params.push(nit);
+    }
+
+
+    params.push(id);
+
+    // Actualizar registro en la base de datos
+    const query = `UPDATE compania SET ${updateFields.join(', ')} WHERE IdCompania = ?`;
+    
+    await con.query(query, params);
+
+    res.status(200).json({ message: 'Compania actualizada exitosamente' });
+  } catch (error) {
+    console.error('Error al actualizar compania:', error);
+    res.status(500).json({ error: 'Error al actualizar compania en la base de datos' });
   }
 };
   

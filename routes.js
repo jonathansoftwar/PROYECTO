@@ -17,11 +17,11 @@ router.post("/productos",controller.createProducto)
 router.delete("/productos/:id",controller.eliminarProducto)
 router.patch("/productos/:id",controller.updateProducto)
 
-//rutas de compañia de la tienda virtual
-router.get("/compania",controller.getUsuarios)
-router.get("/compania/:id",controller.getUsuario)
-router.post("/compania",controller.createUsuario)
-router.delete("/compania/:id",controller.eliminarUsuario)
-router.patch("/compania/:id",controller.updateUsuario)
+//rutas de la compañia de la tienda virtual
+router.get("/companias",controller.getCompanias)
+router.get("/companias/:id",controller.getCompania)
+router.post("/companias",controller.createCompania)
+router.delete("/companias/:id",controller.eliminarCompania)
+router.patch("/companias/:id",controller.updateCompania)
 
 module.exports= router;
