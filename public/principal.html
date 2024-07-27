@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menú principal</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="sidebar">
+    <ul class="menu">
+      <li class="menu-item has-submenu">
+          <a href="#" onclick="showSubMenu('submenu-producto')">Gestión de Productos</a>
+          <ul id="submenu-producto" class= "submenu" style="display:none;">
+            <li><a href="productos/productos.html">Consultar Productos</a></li>
+            <li><a href="productos/crear-producto.html">Crear Producto</a></li>
+        </ul>
+      </li>
+    </ul>
+    <ul class="menu">
+      <li class="menu-item has-submenu">
+          <a href="#" onclick="showSubMenu('submenu-compania')">Gestión de compañias</a>
+          <ul id="submenu-compania" class= "submenu" style="display:none;">
+            <li><a href="#">Consultar compañia</a></li>
+            <li><a href="#">Crear compañia</a></li>
+        </ul>
+      </li>
+    </ul>
+    <ul class="menu">
+      <li class="menu-item has-submenu">
+          <a href="#" onclick="showSubMenu('submenu-usuarios')">Gestión de usuarios</a>
+          <ul id="submenu-usuarios" class= "submenu" style="display:none;">
+            <li><a href="#">Consultar usuario</a></li>
+            <li><a href="#">Crear usuario</a></li>
+        </ul>
+      </li>
+    </ul>
+    <ul class="menu">
+      <li class="menu-item has-submenu">
+          <a href="#" onclick="showSubMenu('submenu-factura')">Facturación</a>
+          <ul id="submenu-factura" class= "submenu" style="display:none;">
+            <li><a href="#">Consultar facturas</a></li>
+            <li><a href="#">Crear facturas</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+    <main class="content">
+      <img src="/images/logo.jpg" alt="Imagen Principal" class="main-image">
+      <p>Los mejores productos para sus mascotas</p>
+    </main>
+  </div>
+  <script>
+    function showSubMenu(submenu) {
+        var submenu = document.getElementById(submenu);
+        submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+    }
+</script>
+</body>
+</html>

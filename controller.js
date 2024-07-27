@@ -137,7 +137,8 @@ try {
   // Obtener el ID del producto insertado
   const productoId = result[0].insertId;
 
-  res.status(201).json({ id: productoId, producto, existencia, valorunitarioventa, valorunitariocompra });
+  //res.status(201).json({ id: productoId, producto, existencia, valorunitarioventa, valorunitariocompra });
+  res.redirect("/productos/productos.html")
 } catch (error) {
   console.error('Error al insertar producto:', error);
   res.status(500).json({ error: 'Error al insertar producto en la base de datos' });
