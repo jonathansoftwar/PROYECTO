@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <img src="/images/logo.jpg" alt="tienda de mascotas" class="imagen">
+        </header>
+        <h1>Lista de Compañias</h1>
+        <table id="companias-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>nit</th>
+                    <th>compañia</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Las filas de las compañias se cargarán aquí -->
+            </tbody>
+        </table>
+        <!-- Modal para editar compañia -->
+        <div id="editModal" style="display: none;">
+            <div style="background-color: white; padding: 20px; border: 1px solid #ddd; width: 500px; margin: 0 auto; margin-top: 100px; position: relative;">
+                <h2>Editar Compañia</h2>
+                <form id="editForm" class="form">
+                    <input type="hidden" id="editIdCompania">
+                    <div>
+                        <label for="nit">nit:</label>
+                        <input type="number" id="editnit" required>
+                    </div>
+                    <div>
+                        <label for="compania">compania:</label>
+                        <input type="text" id="editcompania" required>
+                    </div>
+                    <div class="button-container">
+                        <button type="submit">Guardar Cambios</button>
+                        <button type="button" onclick="cerrarModal()">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Función para cargar las compañias desde el servidor
+        function cargarCompanias() {
+            fetch('/api/companias')
+                .then(response => response.json())
+                .then(data => {
+                    const tabla = document.getElementById('companias-table').getElementsByTagName('tbody')[0];
+                    
+                    // Limpiar las filas existentes
+                    tabla.innerHTML = '';
+
+                    // Añadir filas de companias
+                    data.forEach(compania => {
+                        const fila = tabla.insertRow();
+                        const celdaId = fila.insertCell(0);
+                        const celdanit = fila.insertCell(1);
+                        const celdacompania = fila.insertCell(2);
+                        const celdaAcciones = fila.insertCell(3);
+
+                        celdaId.textContent = compania.IdCompania;
+                        celdanit.textContent = `${compania.Nit}`;
+                        celdacompania.textContent = compania.Compania;
+                        // Iconos de acciones
+                        celdaAcciones.innerHTML = `
+                            <button class="icon-button" onclick="mostrarEditarCompania(${compania.IdCompania}, ${compania.Nit}, '${compania.Compania}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="icon-button" onclick="eliminarCompania(${compania.IdCompania})">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        `;
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al cargar companias:', error);
+                });
+        }
+
+        // Llamar a la función para cargar compañias cuando se cargue la página
+        window.onload = cargarCompanias;
+
+        function eliminarCompania(id) {
+            if (confirm(`¿Está seguro de que desea eliminar la compania con ID: ${id}?`)) {
+                fetch(`/api/companias/${id}`, {
+                    method: 'DELETE',
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Compania eliminada exitosamente');
+                        cargarCompanias(); // Recargar la tabla después de eliminar
+                    } else {
+                        alert('Error al eliminar la compañia');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al eliminar compañia:', error);
+                });
+            }
+        }
+    
+        // Mostrar el modal de edición con los datos de la compañia
+        function mostrarEditarCompania(id, nit, compania) {
+            document.getElementById('editIdCompania').value = id;
+            document.getElementById('editnit').value = nit;
+            document.getElementById('editcompania').value = compania;
+
+            // Mostrar el modal
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        // Cerrar el modal de edición
+        function cerrarModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        // Manejar el envío del formulario de edición
+        document.getElementById('editForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevenir el envío del formulario por defecto
+
+        const id = document.getElementById('editIdCompania').value;
+        const nit = document.getElementById('editnit').value;
+        const compania = document.getElementById('editcompania').value;
+
+
+        fetch(`/api/companias/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ nit, compania })
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Compania actualizado exitosamente');
+                cargarCompania(); // Recargar la tabla después de actualizar
+                cerrarModal(); // Cerrar el modal después de la actualización
+            } else {
+                alert('Error al actualizar el compania');
+            }
+        })
+        .catch(error => {
+            console.error('Error al actualizar compania:', error);
+        });
+});
+    </script>
+</body>
+</html>

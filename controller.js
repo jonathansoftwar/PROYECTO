@@ -35,7 +35,7 @@ exports.createUsuario=async(req, res) => {
     // Obtener el ID del usuario insertado
     const userId = result[0].insertId;
 
-    res.status(201).json({ id: userId, username });
+  res.redirect("/usuarios/usuarios.html")   
   } catch (error) {
     console.error('Error al insertar usuario:', error);
     res.status(500).json({ error: 'Error al insertar usuario en la base de datos' });
@@ -138,7 +138,6 @@ try {
   // Obtener el ID del producto insertado
   const productoId = result[0].insertId;
 
-  //res.status(201).json({ id: productoId, producto, existencia, valorunitarioventa, valorunitariocompra });
   res.redirect("/productos/productos.html")
 } catch (error) {
   console.error('Error al insertar producto:', error);
@@ -251,7 +250,7 @@ try {
   // Obtener el ID de la compañia insertada
   const companiaId = result[0].insertId;
 
-  res.status(201).json({ id: companiaId, nit, compania });
+  res.redirect("/compania/compania.html")
 } catch (error) {
   console.error('Error al insertar compañia:', error);
   res.status(500).json({ error: 'Error al insertar compania en la base de datos' });
