@@ -41,115 +41,11 @@
                     </div>
                     <div class="button-container">
                         <button type="submit">Guardar Cambios</button>
-                        <button type="button" onclick="cerrarModal()">Cancelar</button>
+                        <button type="button">Cancelar</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    <script>
-        // Función para cargar los usuarios desde el servidor
-        function cargarUsuarios() {
-            fetch('/api/usuarios')
-                .then(response => response.json())
-                .then(data => {
-                    const tabla = document.getElementById('usuarios-table').getElementsByTagName('tbody')[0];
-                    
-                    // Limpiar las filas existentes
-                    tabla.innerHTML = '';
-
-                    // Añadir filas de usuarios
-                    data.forEach(usuario => {
-                        const fila = tabla.insertRow();
-                        const celdaId = fila.insertCell(0);
-                        const celdausername = fila.insertCell(1);
-                        const celdapassword = fila.insertCell(2);
-                        const celdaAcciones = fila.insertCell(3);
-
-                        celdaId.textContent = usuario.id;
-                        celdausername.textContent = `${usuario.username}`;
-                        celdapassword.textContent = `${usuario.password}`;
-                        // Iconos de acciones
-                        celdaAcciones.innerHTML = `
-                            <button class="icon-button" onclick="mostrarEditarUsuario(${usuario.id}, '${usuario.username}', '${usuario.password}')">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="icon-button" onclick="eliminarUsuario(${usuario.id})">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        `;
-                    });
-                })
-                .catch(error => {
-                    console.error('Error al cargar los usuarios:', error);
-                });
-        }
-
-        // Llamar a la función para cargar los usuarios cuando se cargue la página
-        window.onload = cargarUsuarios;
-
-        function eliminarUsuario(id) {
-            if (confirm(`¿Está seguro de que desea eliminar el usuario con ID: ${id}?`)) {
-                fetch(`/api/usuarios/${id}`, {
-                    method: 'DELETE',
-                })
-                .then(response => {
-                    if (response.ok) {
-                        alert('Usuario eliminado exitosamente');
-                        cargarUsuarios(); // Recargar la tabla después de eliminar
-                    } else {
-                        alert('Error al eliminar el usuario');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error al eliminar usuario:', error);
-                });
-            }
-        }
-    
-        // Mostrar el modal de edición con los datos del usuario
-        function mostrarEditarUsuario(id, username, password) {
-            document.getElementById('editIdUsuario').value = id;
-            document.getElementById('editusername').value = username;
-            document.getElementById('editpassword').value = password;
-
-            // Mostrar el modal
-            document.getElementById('editModal').style.display = 'block';
-        }
-
-        // Cerrar el modal de edición
-        function cerrarModal() {
-            document.getElementById('editModal').style.display = 'none';
-        }
-
-        // Manejar el envío del formulario de edición
-        document.getElementById('editForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevenir el envío del formulario por defecto
-
-        const id = document.getElementById('editIdUsuario').value;
-        const username = document.getElementById('editusername').value;
-        const password = document.getElementById('editpassword').value;
-
-        fetch(`/api/usuarios/${id}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username, password })
-        })
-        .then(response => {
-            if (response.ok) {
-                alert('Usuario actualizado exitosamente');
-                cargarUsuarios(); // Recargar la tabla después de actualizar
-                cerrarModal(); // Cerrar el modal después de la actualización
-            } else {
-                alert('Error al actualizar el usuario');
-            }
-        })
-        .catch(error => {
-            console.error('Error al actualizar usuario:', error);
-        });
-});
-    </script>
 </body>
 </html>
